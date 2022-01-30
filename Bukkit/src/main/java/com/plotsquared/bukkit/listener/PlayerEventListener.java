@@ -154,7 +154,6 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -224,6 +223,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         }
     }
 
+    @SuppressWarnings("StringSplitter")
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void playerCommand(PlayerCommandPreprocessEvent event) {
         String msg = event.getMessage().toLowerCase().replaceAll("/", "").trim();
@@ -379,6 +379,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         this.eventDispatcher.doRespawnTask(pp);
     }
 
+    @SuppressWarnings("deprecation") // We explicitly want #getHomeSynchronous here
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onTeleport(PlayerTeleportEvent event) {
         Player player = event.getPlayer();
@@ -1063,9 +1064,13 @@ public class PlayerEventListener extends PlotListener implements Listener {
         if (area == null) {
             return;
         }
-        PlayerBlockEventType eventType = null;
+        PlayerBlockEventType eventType;
         BlockType blocktype1;
         Block block = event.getClickedBlock();
+        if (block == null) {
+            // We do not care in this case, the player is likely interacting with air ("nothing").
+            return;
+        }
         Location location = BukkitUtil.adapt(block.getLocation());
         Action action = event.getAction();
         switch (action) {
@@ -1667,6 +1672,7 @@ public class PlayerEventListener extends PlotListener implements Listener {
         }
     }
 
+    @SuppressWarnings("deprecation") // #getLocate is needed for Spigot compatibility
     @EventHandler
     public void onLocaleChange(final PlayerLocaleChangeEvent event) {
         // The event is fired before the player is deemed online upon login

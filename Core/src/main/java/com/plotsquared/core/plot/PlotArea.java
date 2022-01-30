@@ -295,7 +295,7 @@ public abstract class PlotArea {
      * Check if a PlotArea is compatible (move/copy etc.).
      *
      * @param plotArea the {@link PlotArea} to compare
-     * @return true if both areas are compatible
+     * @return {@code true} if both areas are compatible
      */
     public boolean isCompatible(final @NonNull PlotArea plotArea) {
         final ConfigurationSection section = this.worldConfiguration.getConfigurationSection("worlds");
@@ -437,38 +437,6 @@ public abstract class PlotArea {
         );
 
         loadConfiguration(config);
-    }
-
-    private Component getFlagsComponent(Component flagsComponent, Collection<PlotFlag<?, ?>> flagCollection) {
-        if (flagCollection.isEmpty()) {
-            flagsComponent = MINI_MESSAGE.parse(TranslatableCaption.of("flag.no_flags").getComponent(LocaleHolder.console()));
-        } else {
-            String prefix = " ";
-            for (final PlotFlag<?, ?> flag : flagCollection) {
-                Object value;
-                if (flag instanceof DoubleFlag && !Settings.General.SCIENTIFIC) {
-                    value = FLAG_DECIMAL_FORMAT.format(flag.getValue());
-                } else {
-                    value = flag.toString();
-                }
-                Component snip = MINI_MESSAGE.parse(
-                        prefix + CaptionUtility
-                                .format(
-                                        ConsolePlayer.getConsole(),
-                                        TranslatableCaption.of("info.plot_flag_list").getComponent(LocaleHolder.console())
-                                ),
-                        Template.of("flag", flag.getName()),
-                        Template.of("value", CaptionUtility.formatRaw(ConsolePlayer.getConsole(), value.toString()))
-                );
-                if (flagsComponent != null) {
-                    flagsComponent.append(snip);
-                } else {
-                    flagsComponent = snip;
-                }
-                prefix = ", ";
-            }
-        }
-        return flagsComponent;
     }
 
     public abstract void loadConfiguration(ConfigurationSection config);
@@ -1133,7 +1101,7 @@ public abstract class PlotArea {
      * If a schematic is available, it can be used for plot claiming.
      *
      * @param schematic the schematic to look for.
-     * @return true if the schematic exists, false otherwise.
+     * @return {@code true} if the schematic exists, {@code false} otherwise.
      */
     public boolean hasSchematic(@NonNull String schematic) {
         return getSchematics().contains(schematic.toLowerCase());
@@ -1142,7 +1110,7 @@ public abstract class PlotArea {
     /**
      * Get whether economy is enabled and used on this plot area or not.
      *
-     * @return true if this plot area uses economy, false otherwise.
+     * @return {@code true} if this plot area uses economy, {@code false} otherwise.
      */
     public boolean useEconomy() {
         return useEconomy;
@@ -1151,7 +1119,7 @@ public abstract class PlotArea {
     /**
      * Get whether the plot area is limited by a world border or not.
      *
-     * @return true if the plot area has a world border, false otherwise.
+     * @return {@code true} if the plot area has a world border, {@code false} otherwise.
      */
     public boolean hasWorldBorder() {
         return worldBorder;
@@ -1160,7 +1128,7 @@ public abstract class PlotArea {
     /**
      * Get whether plot signs are allowed or not.
      *
-     * @return true if plot signs are allow, false otherwise.
+     * @return {@code true} if plot signs are allowed, {@code false} otherwise.
      */
     public boolean allowSigns() {
         return allowSigns;
@@ -1308,8 +1276,9 @@ public abstract class PlotArea {
      * @deprecated Use {@link #signMaterial()}. This method is used for 1.13 only and
      *         will be removed without replacement in favor of {@link #signMaterial()}
      *         once we remove the support for 1.13.
+     * @since 6.0.3
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.0.3")
     public String getLegacySignMaterial() {
         return this.legacySignMaterial;
     }
@@ -1355,14 +1324,18 @@ public abstract class PlotArea {
 
     /**
      * Get the location for non-members to be teleported to.
+     *
+     * @since 6.1.4
      */
     public BlockLoc nonmemberHome() {
         return this.nonmemberHome;
     }
 
     /**
-     * Get the default location for players to be teleported to. May be overriden by {@link #nonmemberHome} if the player is
+     * Get the default location for players to be teleported to. May be overridden by {@link #nonmemberHome} if the player is
      * not a member of the plot.
+     *
+     * @since 6.1.4
      */
     public BlockLoc defaultHome() {
         return this.defaultHome;
@@ -1371,7 +1344,7 @@ public abstract class PlotArea {
     /**
      * @deprecated Use {@link #nonmemberHome}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.1.4")
     public PlotLoc getNonmemberHome() {
         return new PlotLoc(this.defaultHome.getX(), this.defaultHome.getY(), this.defaultHome.getZ());
     }
@@ -1379,7 +1352,7 @@ public abstract class PlotArea {
     /**
      * @deprecated Use {@link #defaultHome}
      */
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.1.4")
     public PlotLoc getDefaultHome() {
         return new PlotLoc(this.defaultHome.getX(), this.defaultHome.getY(), this.defaultHome.getZ());
     }

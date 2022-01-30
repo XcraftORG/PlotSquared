@@ -219,10 +219,13 @@ public class Plot {
      * Constructor for a new plot.
      * (Only changes after plot.create() will be properly set in the database)
      *
+     * <p>
+     * See {@link Plot#getPlot(Location)} for existing plots
+     * </p>
+     *
      * @param area  the PlotArea where the plot is located
      * @param id    the plot id
      * @param owner the plot owner
-     * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(final PlotArea area, final @NonNull PlotId id, final UUID owner) {
         this(area, id, owner, 0);
@@ -232,9 +235,12 @@ public class Plot {
      * Constructor for an unowned plot.
      * (Only changes after plot.create() will be properly set in the database)
      *
+     * <p>
+     * See {@link Plot#getPlot(Location)} for existing plots
+     * </p>
+     *
      * @param area the PlotArea where the plot is located
      * @param id   the plot id
-     * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(final @NonNull PlotArea area, final @NonNull PlotId id) {
         this(area, id, null, 0);
@@ -245,11 +251,14 @@ public class Plot {
      * The database will ignore any queries regarding temporary plots.
      * Please note that some bulk plot management functions may still affect temporary plots (TODO: fix this)
      *
+     * <p>
+     * See {@link Plot#getPlot(Location)} for existing plots
+     * </p>
+     *
      * @param area  the PlotArea where the plot is located
      * @param id    the plot id
      * @param owner the owner of the plot
      * @param temp  Represents whatever the database manager needs it to
-     * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(final PlotArea area, final @NonNull PlotId id, final UUID owner, final int temp) {
         this.area = area;
@@ -266,6 +275,10 @@ public class Plot {
     /**
      * Constructor for a saved plots (Used by the database manager when plots are fetched)
      *
+     * <p>
+     * See {@link Plot#getPlot(Location)} for existing plots
+     * </p>
+     *
      * @param id        the plot id
      * @param owner     the plot owner
      * @param trusted   the plot trusted players
@@ -278,7 +291,6 @@ public class Plot {
      * @param merged    an array giving merged plots
      * @param timestamp when the plot was created
      * @param temp      value representing whatever DBManager needs to to. Do not touch tbh.
-     * @see Plot#getPlot(Location) for existing plots
      */
     public Plot(
             @NonNull PlotId id,
@@ -418,9 +430,12 @@ public class Plot {
     /**
      * Return a new/cached plot object at a given location.
      *
+     * <p>
+     * Use {@link PlotPlayer#getCurrentPlot()} if a player is expected here.
+     * </p>
+     *
      * @param location the location of the plot
      * @return plot at location or null
-     * @see PlotPlayer#getCurrentPlot() if a player is expected here.
      */
     public static @Nullable Plot getPlot(final @NonNull Location location) {
         final PlotArea pa = location.getPlotArea();
@@ -449,7 +464,7 @@ public class Plot {
      * that could alter the de facto owner of the plot.
      *
      * @return The plot owner of this particular (sub-)plot
-     *         as stored in the database, if one exists. Else, null.
+     * as stored in the database, if one exists. Else, null.
      */
     public @Nullable UUID getOwnerAbs() {
         return this.owner;
@@ -588,10 +603,13 @@ public class Plot {
     /**
      * Get the plot owner of this particular sub-plot.
      * (Merged plots can have multiple owners)
-     * Direct access is discouraged: use getOwners()
+     * Direct access is discouraged: use {@link #getOwners()}
+     *
+     * <p>
+     * Use {@link #getOwnerAbs()} to get the owner as stored in the database
+     * </p>
      *
      * @return Server if ServerPlot flag set, else {@link #getOwnerAbs()}
-     * @see #getOwnerAbs() getOwnerAbs() to get the owner as stored in the database
      */
     public @Nullable UUID getOwner() {
         if (this.getFlag(ServerPlotFlag.class)) {
@@ -1201,12 +1219,6 @@ public class Plot {
      *
      * @return array of entity counts
      * @see RegionManager#countEntities(Plot)
-     *         0 = Entity
-     *         1 = Animal
-     *         2 = Monster
-     *         3 = Mob
-     *         4 = Boat
-     *         5 = Misc
      */
     public int[] countEntities() {
         int[] count = new int[6];
@@ -1225,7 +1237,7 @@ public class Plot {
     /**
      * Returns true if a previous task was running
      *
-     * @return true if a previous task is running
+     * @return {@code true} if a previous task is running
      */
     public int addRunning() {
         int value = this.getRunning();
@@ -1269,7 +1281,7 @@ public class Plot {
     /**
      * Unclaim the plot (does not modify terrain). Changes made to this plot will not be reflected in unclaimed plot objects.
      *
-     * @return false if the Plot has no owner, otherwise true.
+     * @return {@code false} if the Plot has no owner, otherwise {@code true}.
      */
     public boolean unclaim() {
         if (!this.hasOwner()) {
@@ -1686,7 +1698,7 @@ public class Plot {
         return base.settings != null && base.settings.getRatings() != null;
     }
 
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.1.0")
     public boolean claim(final @NonNull PlotPlayer<?> player, boolean teleport, String schematic) {
         if (!canClaim(player)) {
             return false;
@@ -1694,7 +1706,7 @@ public class Plot {
         return claim(player, teleport, schematic, true);
     }
 
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.1.0")
     public boolean claim(final @NonNull PlotPlayer<?> player, boolean teleport, String schematic, boolean updateDB) {
         return claim(player, teleport, schematic, updateDB, false);
     }
@@ -1708,6 +1720,7 @@ public class Plot {
      * @param updateDB  If the database should be updated
      * @param auto      If the plot is being claimed by a /plot auto
      * @return success
+     * @since 6.1.0
      */
     public boolean claim(
             final @NonNull PlotPlayer<?> player, boolean teleport, String schematic, boolean updateDB,
@@ -2669,7 +2682,7 @@ public class Plot {
     /**
      * Checks if the owner of this Plot is online.
      *
-     * @return true if the owner of the Plot is online
+     * @return {@code true} if the owner of the Plot is online
      */
     public boolean isOnline() {
         if (!this.hasOwner()) {
@@ -2834,11 +2847,11 @@ public class Plot {
                         if (this.isOnline()) {
                             seen = TranslatableCaption.of("info.now").getComponent(player);
                         } else {
-                            int time = (int) (ExpireManager.IMP.getAge(this) / 1000);
+                            int time = (int) (ExpireManager.IMP.getAge(this, false) / 1000);
                             if (time != 0) {
                                 seen = TimeUtil.secToTime(time);
                             } else {
-                                seen = TranslatableCaption.of("info.known").getComponent(player);
+                                seen = TranslatableCaption.of("info.unknown").getComponent(player);
                             }
                         }
                     } else {
@@ -3031,8 +3044,11 @@ public class Plot {
      * If rating categories are enabled, get the average rating by category.<br>
      * - The index corresponds to the index of the category in the config
      *
+     * <p>
+     * See {@link Settings.Ratings#CATEGORIES} for rating categories
+     * </p>
+     *
      * @return Average ratings in each category
-     * @see Settings.Ratings#CATEGORIES Rating categories
      */
     public @NonNull double[] getAverageRatings() {
         Map<UUID, Integer> rating;

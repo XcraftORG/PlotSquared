@@ -127,7 +127,7 @@ public abstract class SchematicHandler {
         this.subscriberFactory = subscriberFactory;
     }
 
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.0.0")
     public static void upload(
             @Nullable UUID uuid,
             final @Nullable String file,
@@ -520,7 +520,7 @@ public abstract class SchematicHandler {
         return null;
     }
 
-    @Deprecated(forRemoval = true)
+    @Deprecated(forRemoval = true, since = "6.0.0")
     public void upload(final CompoundTag tag, UUID uuid, String file, RunnableVal<URL> whenDone) {
         if (tag == null) {
             TaskManager.runTask(whenDone);
@@ -543,7 +543,7 @@ public abstract class SchematicHandler {
      *
      * @param tag  to save
      * @param path to save in
-     * @return true if succeeded
+     * @return {@code true} if succeeded
      */
     public boolean save(CompoundTag tag, String path) {
         if (tag == null) {

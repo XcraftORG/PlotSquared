@@ -45,6 +45,7 @@ import com.plotsquared.core.queue.ChunkQueueCoordinator;
 import com.plotsquared.core.queue.GlobalBlockQueue;
 import com.plotsquared.core.queue.QueueCoordinator;
 import com.plotsquared.core.util.ChunkManager;
+import com.plotsquared.core.util.EventDispatcher;
 import com.plotsquared.core.util.MathMan;
 import com.plotsquared.core.util.RegionManager;
 import com.plotsquared.core.util.RegionUtil;
@@ -93,6 +94,7 @@ public class HybridUtils {
     private final GlobalBlockQueue blockQueue;
     private final WorldUtil worldUtil;
     private final SchematicHandler schematicHandler;
+    private final EventDispatcher eventDispatcher;
 
     @Inject
     public HybridUtils(
@@ -100,13 +102,15 @@ public class HybridUtils {
             final @NonNull ChunkManager chunkManager,
             final @NonNull GlobalBlockQueue blockQueue,
             final @NonNull WorldUtil worldUtil,
-            final @NonNull SchematicHandler schematicHandler
+            final @NonNull SchematicHandler schematicHandler,
+            final @NonNull EventDispatcher eventDispatcher
     ) {
         this.plotAreaManager = plotAreaManager;
         this.chunkManager = chunkManager;
         this.blockQueue = blockQueue;
         this.worldUtil = worldUtil;
         this.schematicHandler = schematicHandler;
+        this.eventDispatcher = eventDispatcher;
     }
 
     public void regeneratePlotWalls(final PlotArea area) {
@@ -148,12 +152,22 @@ public class HybridUtils {
                 return;
             }
 
-            ChunkQueueCoordinator chunk = new ChunkQueueCoordinator(bot, top, false);
+            ChunkQueueCoordinator chunk = new ChunkQueueCoordinator(worldUtil.getWeWorld(world), bot, top, false);
             hpw.getGenerator().generateChunk(chunk, hpw);
 
+            final BlockState airBlock = BlockTypes.AIR.getDefaultState();
             final BlockState[][][] oldBlocks = chunk.getBlocks();
             final BlockState[][][] newBlocks = new BlockState[256][width][length];
-            final BlockState airBlock = BlockTypes.AIR.getDefaultState();
+            for (final BlockState[][] newBlock : newBlocks) {
+                for (final BlockState[] blockStates : newBlock) {
+                    Arrays.fill(blockStates, airBlock);
+                }
+            }
+            for (final BlockState[][] oldBlock : oldBlocks) {
+                for (final BlockState[] blockStates : oldBlock) {
+                    Arrays.fill(blockStates, airBlock);
+                }
+            }
 
             System.gc();
             System.gc();
@@ -221,9 +235,6 @@ public class HybridUtils {
                         for (int y = 0; y < 256; y++) {
                             BlockState old = oldBlocks[y][x][z];
                             try {
-                                if (old == null) {
-                                    old = airBlock;
-                                }
                                 BlockState now = newBlocks[y][x][z];
                                 if (!old.equals(now)) {
                                     changes[i]++;
@@ -341,7 +352,7 @@ public class HybridUtils {
                     result.add(whenDone.value.variety_sd);
                     PlotFlag<?, ?> plotFlag = GlobalFlagContainer.getInstance().getFlag(AnalysisFlag.class).createFlagInstance(
                             result);
-                    PlotFlagAddEvent event = new PlotFlagAddEvent(plotFlag, origin);
+                    PlotFlagAddEvent event = eventDispatcher.callFlagAdd(plotFlag, origin);
                     if (event.getEventResult() == Result.DENY) {
                         return;
                     }

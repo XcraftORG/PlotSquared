@@ -57,7 +57,9 @@ import java.nio.file.Files;
 
 public class SinglePlotArea extends GridPlotWorld {
 
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final EventDispatcher eventDispatcher;
+    @SuppressWarnings({"unused", "FieldCanBeLocal"})
     private final PlotListener plotListener;
     public boolean VOID = false;
 
@@ -81,6 +83,7 @@ public class SinglePlotArea extends GridPlotWorld {
      * Returns true if the given string matches the naming system used to identify single plot worlds
      * e.g. -1_5 represents plot id *;-1;5. "*" being the plot area name given to single plot world
      * {@link com.plotsquared.core.plot.PlotArea}.
+     * @since 6.1.4
      */
     public static boolean isSinglePlotWorld(String worldName) {
         int len = worldName.length();
@@ -273,6 +276,7 @@ public class SinglePlotArea extends GridPlotWorld {
         return false; // do not create signs for single plots
     }
 
+    @SuppressWarnings("deprecation")
     protected Plot adapt(Plot p) {
         if (p instanceof SinglePlot) {
             return p;

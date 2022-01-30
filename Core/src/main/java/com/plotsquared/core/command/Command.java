@@ -288,7 +288,7 @@ public abstract class Command {
      * @param args     Arguments
      * @param confirm  Instance, Success, Failure
      * @param whenDone task to run when done
-     * @return CompletableFuture true if the command executed fully, false in
+     * @return CompletableFuture {@code true} if the command executed fully, {@code false} in
      *         any other case
      */
     public CompletableFuture<Boolean> execute(
@@ -375,7 +375,6 @@ public abstract class Command {
             boolean failed = args.length < reqArgs.length;
             String[] baseSplit = getCommandString().split(" ");
             String[] fullSplit = getUsage().split(" ");
-            String base = getCommandString();
             if (fullSplit.length - baseSplit.length < reqArgs.length) {
                 String[] tmp = new String[baseSplit.length + reqArgs.length];
                 System.arraycopy(fullSplit, 0, tmp, 0, fullSplit.length);
